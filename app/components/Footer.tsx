@@ -1,12 +1,9 @@
-// app/components/Footer.tsx
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="w-full bg-gray-200 text-center p-4 border-t border-gray-300">
       <p className="text-sm text-gray-600">
-        {/* Reemplaza los textos entre corchetes [] con tu información */}
         Sistema desarrollado por <strong>LionellNava21</strong>.
       </p>
       <p className="text-xs text-gray-500 mt-1">

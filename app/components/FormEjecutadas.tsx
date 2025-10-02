@@ -1,10 +1,8 @@
-// app/components/FormEjecutadas.tsx
 'use client';
 
 import { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
-// Definimos la "forma" de los datos del formulario de ejecución
 interface EjecutadasFormState {
   proceso_actividad: string;
   tipo: string;
@@ -17,7 +15,7 @@ interface EjecutadasFormState {
   proceso_administrativo_status: 'EN PROCESO' | 'EN TRÁMITE' | 'CONCLUIDO';
   acuerdos_desarrollos: string;
   entes_participantes: string;
-  cantidad_participantes: number | ''; // Puede ser número o un string vacío al inicio
+  cantidad_participantes: number | '';
 }
 
 const initialState: EjecutadasFormState = {
@@ -41,35 +39,38 @@ export default function FormEjecutadas() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    // Manejar el campo de número
     const val = type === 'number' ? (value === '' ? '' : parseInt(value, 10)) : value;
     setFormData((prev) => ({ ...prev, [name]: val }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessage('');
+    setMessage('Guardando...');
+
+    // FIX: Corregir el error de 'invalid syntax for type integer'.
+    // Si el campo de participantes está vacío (''), lo convertimos a null antes de enviarlo.
+    const dataToSubmit = {
+      ...formData,
+      cantidad_participantes: formData.cantidad_participantes === '' ? null : Number(formData.cantidad_participantes),
+    };
 
     const { error } = await supabase
       .from('actividades_ejecutadas')
-      .insert([formData]);
+      .insert([dataToSubmit]); // Usamos el objeto de datos corregido
 
     if (error) {
       console.error('Error al guardar:', error);
       setMessage(`Error al guardar la actividad: ${error.message}`);
     } else {
       setMessage('¡Actividad ejecutada guardada con éxito!');
-      setFormData(initialState); // Limpiar el formulario
+      setFormData(initialState);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-6 bg-white rounded-lg shadow-md max-w-4xl mx-auto mt-10">
-      <h2 className="text-2xl font-bold text-gray-700">Registrar Actividad Ejecutada</h2>
-
-      {/* ... (resto de los campos del formulario) ... */}
+    <form onSubmit={handleSubmit} className="space-y-4 p-6 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+      <h2 className="text-xl font-bold text-gray-700">Registrar Actividad Ejecutada</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Columna Izquierda */}
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600">Proceso / Actividad</label>
@@ -96,8 +97,6 @@ export default function FormEjecutadas() {
             <textarea name="acuerdos_desarrollos" value={formData.acuerdos_desarrollos} onChange={handleChange} rows={3} className="mt-1 block w-full border border-gray-300 rounded-md p-2"></textarea>
           </div>
         </div>
-
-        {/* Columna Derecha */}
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600">Tipo</label>
@@ -132,12 +131,10 @@ export default function FormEjecutadas() {
           </div>
         </div>
       </div>
-      
       <button type="submit" className="w-full bg-blue-700 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-800 mt-6">
         Guardar Ejecución
       </button>
-
-      {message && <p className="text-center mt-4 text-sm font-medium">{message}</p>}
+      {message && <p className="text-center mt-4 p-2 bg-gray-100 rounded-md text-sm font-medium">{message}</p>}
     </form>
   );
 }

@@ -1,4 +1,3 @@
-// app/reportes/page.tsx
 'use client';
 import { useState } from "react";
 import FiltrosReporte from "../components/FiltrosReporte";
@@ -6,7 +5,7 @@ import ResultadosReporte from "../components/ResultadosReporte";
 import { supabase } from "../../lib/supabaseClient";
 import { ActividadEjecutada } from "../components/TablaEjecutadas";
 
-// Definimos la forma de los filtros aquí para que sea clara
+// FIX: Definimos la forma de los filtros para evitar el tipo 'any'.
 interface FiltrosState {
     fechaDesde: string;
     fechaHasta: string;
@@ -18,7 +17,6 @@ export default function ReportesPage() {
     const [resultados, setResultados] = useState<ActividadEjecutada[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Corregimos el 'any' con el tipo específico 'FiltrosState'
     const handleGenerarReporte = async (filtros: FiltrosState) => {
         setLoading(true);
         
@@ -54,9 +52,7 @@ export default function ReportesPage() {
     return (
         <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Módulo de Reportes</h1>
-            
             <FiltrosReporte onGenerarReporte={handleGenerarReporte} />
-            
             <ResultadosReporte data={resultados} loading={loading} />
         </div>
     );

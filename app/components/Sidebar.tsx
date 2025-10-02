@@ -1,4 +1,3 @@
-// app/components/Sidebar.tsx
 'use client';
 
 import Link from 'next/link';
@@ -16,12 +15,12 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-gray-800 text-white p-4">
+    <aside className="w-64 flex-shrink-0 bg-gray-800 text-white p-4 flex flex-col">
       <div className="mb-8 text-center">
         <h2 className="text-2xl font-bold">SGA</h2>
         <p className="text-sm text-gray-400">Gestión de Actividades</p>
       </div>
-      <nav>
+      <nav className='flex-grow'>
         <ul>
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
