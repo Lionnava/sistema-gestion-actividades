@@ -6,7 +6,7 @@ import ResultadosReporte from "../components/ResultadosReporte";
 import { supabase } from "../../lib/supabaseClient";
 import { ActividadEjecutada } from "../components/TablaEjecutadas";
 
-// Definimos la forma de los filtros
+// Definimos la forma de los filtros aquí para que sea clara
 interface FiltrosState {
     fechaDesde: string;
     fechaHasta: string;
@@ -18,10 +18,10 @@ export default function ReportesPage() {
     const [resultados, setResultados] = useState<ActividadEjecutada[]>([]);
     const [loading, setLoading] = useState(false);
 
+    // Corregimos el 'any' con el tipo específico 'FiltrosState'
     const handleGenerarReporte = async (filtros: FiltrosState) => {
         setLoading(true);
         
-        // Construimos la consulta a Supabase de forma dinámica
         let query = supabase
             .from('actividades_ejecutadas')
             .select('id, fecha, proceso_actividad, lugar, responsable_nombre, proceso_administrativo_status, cantidad_participantes');
