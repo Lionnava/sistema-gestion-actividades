@@ -1,10 +1,8 @@
 // app/components/TablaEjecutadas.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+// FIX: Ya no necesitamos useState ni useEffect aquí
 
-// Definimos la forma de una actividad ejecutada
 export interface ActividadEjecutada {
   id: string;
   fecha: string;
@@ -15,55 +13,33 @@ export interface ActividadEjecutada {
   cantidad_participantes: number | null;
 }
 
-export default function TablaEjecutadas() {
-  const [actividades, setActividades] = useState<ActividadEjecutada[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// FIX: Definimos las props que el componente recibirá desde la página padre.
+interface TablaEjecutadasProps {
+  data: ActividadEjecutada[];
+  loading: boolean;
+}
 
-  useEffect(() => {
-    const fetchActividades = async () => {
-      setLoading(true);
-      setError(null);
-
-      const { data, error: fetchError } = await supabase
-        .from('actividades_ejecutadas')
-        .select('id, fecha, proceso_actividad, lugar, responsable_nombre, proceso_administrativo_status, cantidad_participantes')
-        .order('fecha', { ascending: false });
-
-      if (fetchError) {
-        console.error('Error fetching data:', fetchError);
-        setError(`No se pudieron cargar las actividades ejecutadas: ${fetchError.message}`);
-      } else {
-        setActividades(data || []);
-      }
-      setLoading(false);
-    };
-
-    fetchActividades();
-  }, []);
-
+export default function TablaEjecutadas({ data: actividades, loading }: TablaEjecutadasProps) {
+  
+  // FIX: Ya no hay una función fetchActividades. La lógica ahora vive en la página.
+  
   if (loading) return <p className="text-center mt-8">Cargando actividades...</p>;
-  if (error) return <p className="text-center mt-8 text-red-600">{error}</p>;
 
-  // Función para dar estilo al status
   const getStatusColor = (status: string | null) => {
+    // ... (esta función no cambia) ...
     switch (status) {
-      case 'CONCLUIDO':
-        return 'bg-green-100 text-green-800';
-      case 'EN TRÁMITE':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'EN PROCESO':
-      default:
-        return 'bg-blue-100 text-blue-800';
+      case 'CONCLUIDO': return 'bg-green-100 text-green-800';
+      case 'EN TRÁMITE': return 'bg-yellow-100 text-yellow-800';
+      case 'EN PROCESO': default: return 'bg-blue-100 text-blue-800';
     }
   };
-
 
   return (
     <div className="mt-10 p-6 bg-white rounded-lg shadow-md max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold text-gray-700 mb-4">Historial de Actividades Ejecutadas</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white text-sm">
+          {/* ... (la estructura de la tabla no cambia) ... */}
           <thead className="bg-gray-700 text-white">
             <tr>
               <th className="py-2 px-4 text-left">Fecha</th>
@@ -75,11 +51,7 @@ export default function TablaEjecutadas() {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {actividades.length === 0 ? (
-                <tr>
-                    <td colSpan={5} className="py-4 px-4 text-center text-gray-500">
-                        No hay actividades ejecutadas para mostrar.
-                    </td>
-                </tr>
+                <tr><td colSpan={5} className="py-4 px-4 text-center text-gray-500">No hay actividades ejecutadas para mostrar.</td></tr>
             ) : (
                 actividades.map((act) => (
                   <tr key={act.id} className="hover:bg-gray-50">
